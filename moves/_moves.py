@@ -1,5 +1,5 @@
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import requests
 import types
 
@@ -53,7 +53,7 @@ class MovesClient(object):
             params['redirect_uri'] = redirect_uri
 
         # Moves hates +s for spaces, so use %20 instead.
-        encoded = urllib.urlencode(params).replace('+', '%20')
+        encoded = urllib.parse.urlencode(params).replace('+', '%20')
         return "%s?%s" % (self.auth_url, encoded)
 
     def get_oauth_token(self, code, **kwargs):
@@ -175,12 +175,12 @@ and then parses the response.
 
         # Clone a new method with the correct name and doc string.
         retval = types.FunctionType(
-            closure.func_code,
-            closure.func_globals,
+            closure.__code__,
+            closure.__globals__,
             name,
-            closure.func_defaults,
-            closure.func_closure)
-        retval.func_doc =  closure.func_doc % base_path
+            closure.__defaults__,
+            closure.__closure__)
+        retval.__doc__ =  closure.__doc__ % base_path
 
         # Cache it to avoid additional calls to __getattr__.
         setattr(self, name, retval)

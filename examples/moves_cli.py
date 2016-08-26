@@ -40,7 +40,7 @@ def _parse_line(f):
                   tee=itertools.tee):
         'Use a predicate to partition entries into false entries and true entries'
         t1, t2 = tee(iterable)
-        return filterfalse(pred, t1), filter(pred, t2)
+        return filterfalse(pred, t1), list(filter(pred, t2))
 
     @wraps(f)
     def wrapper(self, line):
@@ -57,7 +57,7 @@ class MovesCmd(_Cmd):
 
     def default(self, line):
         '''Echos the arguments and exits the interpreter.'''
-        print `argv`
+        print(repr(argv))
 
     def do_quit(self, line):
         '''Exits the interpreter.'''
@@ -65,29 +65,29 @@ class MovesCmd(_Cmd):
 
     def do_copyright(self, line):
         '''Displays copyright and licensing information.'''
-        print copyright
+        print(copyright)
 
     def do_client_id(self, line):
         '''Displays or sets the value.'''
         if line:
             self.mc.client_id = line
         elif self.mc.client_id:
-            print 'client_id =', self.mc.client_id
+            print('client_id =', self.mc.client_id)
         else:
-            print 'The client id is not set.'
+            print('The client id is not set.')
 
     def do_client_secret(self, line):
         '''Displays or sets the value.'''
         if line:
             self.mc.client_secret = line
         elif self.mc.client_secret:
-            print 'client_secret =', self.mc.client_secret
+            print('client_secret =', self.mc.client_secret)
         else:
-            print 'The client secret is not set.'
+            print('The client secret is not set.')
 
     def do_access_token(self, line):
         '''Displays or sets the value.'''
-        from urlparse import urlparse, parse_qs
+        from urllib.parse import urlparse, parse_qs
         mc = self.mc
         if line:
             parts = urlparse(line)
@@ -95,13 +95,13 @@ class MovesCmd(_Cmd):
             mc.access_token = mc.get_oauth_token(code)
             mc.access_token = line
         elif mc.access_token:
-            print 'access_token =', mc.access_token
+            print('access_token =', mc.access_token)
         else:
-            print 'The access token is not set.'
-            print 'Enter the URL below in a web browser and follow the instructions.'
-            print ' ', mc.build_oauth_url()
-            print 'Once the web browser redirects, copy the complete URL and'
-            print 'use it to re-run this command.'
+            print('The access token is not set.')
+            print('Enter the URL below in a web browser and follow the instructions.')
+            print(' ', mc.build_oauth_url())
+            print('Once the web browser redirects, copy the complete URL and')
+            print('use it to re-run this command.')
 
     def do_load(self, filename):
         '''Loads the API state from a JSON file.'''
@@ -139,20 +139,20 @@ Syntax:
 
     def do_examples(self, line):
         '''Displays example commands.'''
-        print '''\
+        print('''\
 These are some commands to try.
  get user profile
  get user summary daily pastDays=7
  get user activities daily pastDays=5
  get user places daily pastDays=3
  get user storyline daily pastDays=2
-'''
+''')
 
     def onecmd(self, line):
         try:
             return _Cmd.onecmd(self, line)
         except Exception as error:
-            print "%s: %s" % (type(error).__name__, error)
+            print("%s: %s" % (type(error).__name__, error))
 
     def preloop(self):
         self.mc = MovesClient()
